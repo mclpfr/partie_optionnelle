@@ -1,0 +1,20 @@
+service: "src.service_batch:svc"
+description: "Service de Prédiction d'Admission"
+python:
+  packages:
+    - numpy
+    - pandas
+    - scikit-learn
+    - pydantic
+    - pyjwt
+    - bentoml
+    - fastapi
+
+docker:
+  dockerfile_template: "./Dockerfile.template"
+  base_image: python:3.8-slim
+
+models:
+  - lopes_admission_lr:latest
+  - lopes_admission_scaler:latest
+

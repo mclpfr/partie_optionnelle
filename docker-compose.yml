@@ -1,0 +1,20 @@
+version: "3"
+services:
+  api:
+    image: admission_service:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - BENTOML_PORT=3000
+  runner1_single:
+    image: admission_service:latest
+    command: [
+      "bentoml", "start-runner-server", "/home/bentoml/bento",
+      "--host=0.0.0.0", "--runner-name", "lopes_admission_lr_single"
+    ]
+  runner2_batch:
+    image: admission_service:latest
+    command: [
+      "bentoml", "start-runner-server", "/home/bentoml/bento",
+      "--host=0.0.0.0", "--runner-name", "lopes_admission_lr_batch"
+    ]
