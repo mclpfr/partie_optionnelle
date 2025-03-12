@@ -1,9 +1,9 @@
-
 import bentoml
 import numpy as np
 from bentoml.io import JSON
 from src.models.input_model import AdmissionInput, BatchAdmissionInput
 from src.auth.jwt_auth import JWTAuthMiddleware, generate_token, get_current_user
+from src.pg.pginit import init_db, DATABASE_CONFIG
 from starlette.responses import JSONResponse
 from typing import Optional, Dict, Any
 import asyncio
@@ -13,6 +13,7 @@ import time
 import json
 import os
 import threading
+import psycopg2
 
 # Configuration des runners
 runner1 = bentoml.sklearn.get("lopes_admission_lr:latest").to_runner(name="lopes_admission_lr_single")
@@ -52,6 +53,10 @@ def save_jobs(jobs):
     except Exception as e:
         print(f"Erreur lors de la sauvegarde des jobs: {e}")
 
+@svc.on_startup
+async def startup_tasks(*args):
+    init_db()
+
 @svc.api(input=JSON(), output=JSON())
 async def login(input_data, ctx: Context):
     username = input_data.get("username")
@@ -86,6 +91,29 @@ async def predict(data: AdmissionInput, ctx: bentoml.Context):
     input_data_scaled = scaler.transform(input_data)
 
     prediction = await runner1.async_run(input_data_scaled)
+
+    try:
+        conn = psycopg2.connect(**DATABASE_CONFIG)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO predictions (
+                gre_score, toefl_score, university_rating, sop, lor, cgpa, research, chance_of_admit
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            data.gre_score,
+            data.toefl_score,
+            data.university_rating,
+            data.sop,
+            data.lor,
+            data.cgpa,
+            data.research,
+            float(prediction[0])
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print(f"Erreur d'insertion: {e}")
     
     return {"chance_of_admit": float(prediction[0])}
 
@@ -100,11 +128,15 @@ async def batch_predict(input_data, ctx: bentoml.Context):
         ctx.response.status_code = 401
         return {"message": str(e)}
     
-    # Pour les tests, utiliser un job_id fixe
-    job_id = "job_1"
-    
     # Charger les jobs existants
     jobs = load_jobs()
+    
+    # Déterminer le prochain job_id
+    if jobs:
+        last_job_id = max(int(key.split('_')[1]) for key in jobs.keys() if key.startswith("job_"))
+        job_id = f"job_{last_job_id + 1}"
+    else:
+        job_id = "job_1"  # Si aucun job n'existe, commencer par job_1
     
     # Stockage des données et du statut initial
     jobs[job_id] = {
@@ -168,6 +200,33 @@ async def batch_predict(input_data, ctx: bentoml.Context):
         
         # Sauvegarder les jobs mis à jour
         save_jobs(jobs)
+
+        # Stockage dans PostgreSQL
+    try:
+        conn = psycopg2.connect(**DATABASE_CONFIG)
+        cur = conn.cursor()
+        for item, pred in zip(input_data.predictions, predictions):
+            cur.execute("""
+                INSERT INTO predictions (
+                    job_id, gre_score, toefl_score, university_rating, sop, lor, cgpa, research, chance_of_admit
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                job_id,
+                item.gre_score,
+                item.toefl_score,
+                item.university_rating,
+                item.sop,
+                item.lor,
+                item.cgpa,
+                item.research,
+                float(pred)
+            ))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print(f"Erreur batch: {e}")
+        return {"job_id": job_id, "status": "failed"}
     
     return {"job_id": job_id, "status": "pending"}
 

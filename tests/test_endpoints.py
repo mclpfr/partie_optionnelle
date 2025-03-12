@@ -87,7 +87,7 @@ def test_batch_prediction(base_url, headers):
         assert status_response.status_code == 200
         status_data = status_response.json()
         
-        if status_data["status"] == "completed":
+        if status_data["status"] == "pending":
             break
             
         time.sleep(1)

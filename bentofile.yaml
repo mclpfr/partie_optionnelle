@@ -9,6 +9,7 @@ python:
     - pyjwt
     - bentoml
     - fastapi
+    - psycopg2-binary
 
 docker:
   dockerfile_template: "./Dockerfile.template"
@@ -18,3 +19,5 @@ models:
   - lopes_admission_lr:latest
   - lopes_admission_scaler:latest
 
+exclude:
+  - "monitoring/postgres/data" 

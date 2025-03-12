@@ -8,7 +8,7 @@ class AdmissionInput(BaseModel):
     sop: float 
     lor: float 
     cgpa: float 
-    research: int 
+    research: bool 
 
 class BatchAdmissionInput(BaseModel):
     predictions: List[AdmissionInput]

@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   api:
     image: admission_service:latest
@@ -6,15 +7,59 @@ services:
       - "3000:3000"
     environment:
       - BENTOML_PORT=3000
+    networks:
+      - admission_service_network
+
   runner1_single:
     image: admission_service:latest
-    command: [
-      "bentoml", "start-runner-server", "/home/bentoml/bento",
-      "--host=0.0.0.0", "--runner-name", "lopes_admission_lr_single"
-    ]
+    command:
+      - "bentoml"
+      - "start-runner-server"
+      - "/home/bentoml/bento"
+      - "--host=0.0.0.0"
+      - "--runner-name"
+      - "lopes_admission_lr_single"
+    networks:
+      - admission_service_network
+
   runner2_batch:
     image: admission_service:latest
-    command: [
-      "bentoml", "start-runner-server", "/home/bentoml/bento",
-      "--host=0.0.0.0", "--runner-name", "lopes_admission_lr_batch"
-    ]
+    command:
+      - "bentoml"
+      - "start-runner-server"
+      - "/home/bentoml/bento"
+      - "--host=0.0.0.0"
+      - "--runner-name"
+      - "lopes_admission_lr_batch"
+    networks:
+      - admission_service_network
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: grafana
+      POSTGRES_PASSWORD: grafana
+      POSTGRES_DB: predictions
+    volumes:
+      - ./monitoring/postgres/data:/var/lib/postgresql/data
+      - ./monitoring/postgres/schema.sql:/docker-entrypoint-initdb.d/1_init.sql  
+    ports:
+    - "5432:5432"
+    networks:
+      - admission_service_network
+     
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - admission_service_network
+
+networks:
+  admission_service_network:
+    driver: bridge

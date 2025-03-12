@@ -1,0 +1,19 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    database: predictions
+    user: grafana
+    secureJsonData:
+      password: grafana 
+    jsonData:
+      sslmode: disable  
+      schema: public
+      maxOpenConns: 10  
+      maxIdleConns: 5  
+      maxIdleConnsAuto: true
+      postgresVersion: 1300  
+      timescaledb: false    
