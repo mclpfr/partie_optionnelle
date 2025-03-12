@@ -39,7 +39,7 @@ L'architecture du service se compose de trois composants principaux :
 ### 1. Installer les dépendances
 
 ```bash
-python -m venv .venv
+python3 -m venv venv
 source .venv/bin/activate  # Sur Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```

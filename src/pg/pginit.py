@@ -25,11 +25,11 @@ def init_db():
                 gre_score INT,
                 toefl_score INT,
                 university_rating INT,
-                sop REAL,
-                lor REAL,
-                cgpa REAL,
+                sop INT,
+                lor INT,
+                cgpa INT,
                 research INT,
-                chance_of_admit REAL
+                chance_of_admit FLOAT
             );
         """)
         cur.close()

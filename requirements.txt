@@ -9,4 +9,4 @@ scikit-learn==1.3.2
 matplotlib==3.7.5 
 pyjwt==2.9.0
 fastapi==0.115.11
-psycopg2-binary
+psycopg2-binary==2.9.10

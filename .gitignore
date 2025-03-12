@@ -5,3 +5,6 @@ tests/__pycache__
 src/__pycache__
 src/models/__pycache__
 src/pg/__pycache__
+data/processed
+data/raw
+src/auth/__pycache__
