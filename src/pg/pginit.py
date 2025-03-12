@@ -25,9 +25,9 @@ def init_db():
                 gre_score INT,
                 toefl_score INT,
                 university_rating INT,
-                sop INT,
-                lor INT,
-                cgpa INT,
+                sop FLOAT,
+                lor FLOAT,
+                cgpa FLOAT,
                 research INT,
                 chance_of_admit FLOAT
             );
