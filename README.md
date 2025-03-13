@@ -66,7 +66,7 @@ bentoml build
 ### 4. Construire l'image Docker
 
 ```bash
-bentoml containerize admission_service:yhgpobx2rsddga5v --image-tag admission_service:latest
+bentoml containerize admission_service:latest --image-tag admission_service:latest
 ```
 
 ## Lancement
