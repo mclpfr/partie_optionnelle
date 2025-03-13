@@ -77,7 +77,7 @@ docker-compose up -d
 
 ## Utilisation de l'API
 
-> **Important** : Après le lancement des conteneurs, veuillez attendre quelques secondes que l'API s'initialise complètement avant d'exécuter les commandes curl. Sinon, les tests pourraient échouer.
+> **Important** : Après le lancement des conteneurs, il faut attendre quelques secondes que l'API s'initialise complètement avant d'exécuter les commandes curl. 
 
 ### Authentification
 
