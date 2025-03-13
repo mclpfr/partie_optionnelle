@@ -1,4 +1,3 @@
-
 import pytest
 import requests
 import time
@@ -57,7 +56,7 @@ def test_batch_prediction(base_url, headers):
                 "sop": 3.0,
                 "lor": 4.0,
                 "cgpa": 7.94,
-                "research": 0
+                "research": 1
             }
         ] * 3
     }

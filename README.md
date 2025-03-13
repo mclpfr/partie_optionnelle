@@ -27,10 +27,11 @@ L'architecture du service se compose de trois composants principaux :
 - **Prédictions individuelles** - Prédiction pour un étudiant
 - **Prédictions par lots** - Traitement de multiples prédictions en une seule requête
 - **Gestion des jobs asynchrones** - Pour les requêtes batch avec suivi de statut
+- **Monitoring** - Visualisation des prédictions avec Grafana et stockage dans PostgreSQL
 
 ## Prérequis
 
-- Python 3.8+
+- Python 3.10
 - Docker et Docker Compose
 - Un modèle scikit-learn entraîné avec le tag "lopes_admission_lr:latest" dans BentoML
 
@@ -39,8 +40,8 @@ L'architecture du service se compose de trois composants principaux :
 ### 1. Installer les dépendances
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate 
+python -m venv .venv
+source venv/bin/activate  
 pip install -r requirements.txt
 ```
 
@@ -142,6 +143,29 @@ curl -X POST http://localhost:3000/batch_status \
   }'
 ```
 
+## Monitoring
+
+Le service inclut un système de monitoring complet basé sur PostgreSQL et Grafana:
+
+1. **PostgreSQL** - Stocke les données de prédiction pour analyse ultérieure
+2. **Grafana** - Visualise les données de prédiction via un dashboard
+
+### Accès au dashboard Grafana
+
+- URL: http://localhost:3001
+- Identifiants par défaut:
+  - Login: admin
+  - Mot de passe: admin
+- Lors de la première connexion, vous pouvez choisir "Skip" pour passer l'étape de changement de mot de passe
+
+### Dashboard "Prédiction"
+
+Le dashboard "Prédiction" affiche les données des prédictions effectuées via l'API, incluant:
+- Historique des prédictions
+- Statistiques sur les paramètres utilisés
+- Chances d'admission calculées
+- Suivi des jobs batch
+
 ## Tests
 
 ```bash
@@ -160,6 +184,13 @@ project/
 │   └── service_batch.py     # Service BentoML principal
 ├── tests/
 │   └── test_endpoints.py    # Tests des endpoints
+├── monitoring/
+│   ├── grafana/
+│   │   ├── dashboards/      # Configurations des dashboards Grafana
+│   │   └── provisioning/    # Configuration de provisioning Grafana
+│   └── postgres/
+│       ├── data/            # Données persistantes PostgreSQL
+│       └── schema.sql       # Schéma de base de données
 ├── bentofile.yml           # Configuration BentoML
 ├── docker-compose.yml      # Configuration Docker
 ├── requirements.txt        # Dépendances Python

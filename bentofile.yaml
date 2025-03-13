@@ -13,7 +13,7 @@ python:
 
 docker:
   dockerfile_template: "./Dockerfile.template"
-  base_image: python:3.8-slim
+  base_image: python:3.10-slim
 
 models:
   - lopes_admission_lr:latest

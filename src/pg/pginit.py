@@ -22,13 +22,13 @@ def init_db():
                 id SERIAL PRIMARY KEY,
                 job_id VARCHAR(255),
                 created_at TIMESTAMP DEFAULT NOW(),
-                gre_score INT,
-                toefl_score INT,
-                university_rating INT,
+                gre_score INTEGER,
+                toefl_score INTEGER,
+                university_rating INTEGER,
                 sop FLOAT,
                 lor FLOAT,
                 cgpa FLOAT,
-                research INT,
+                research INTEGER CHECK (research IN (0, 1)),
                 chance_of_admit FLOAT
             );
         """)
