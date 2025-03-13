@@ -40,7 +40,7 @@ L'architecture du service se compose de trois composants principaux :
 ### 1. Installer les dépendances
 
 ```bash
-python3.10 -m venv venv
+python -m venv .venv
 source venv/bin/activate  
 pip install -r requirements.txt
 ```
@@ -76,6 +76,8 @@ docker-compose up -d
 ```
 
 ## Utilisation de l'API
+
+> **Important** : Après le lancement des conteneurs, veuillez attendre quelques secondes que l'API s'initialise complètement avant d'exécuter les commandes curl. Sinon, les tests pourraient échouer.
 
 ### Authentification
 
@@ -152,7 +154,7 @@ Le service inclut un système de monitoring complet basé sur PostgreSQL et Graf
 
 ### Accès au dashboard Grafana
 
-- URL: http://localhost:3001/dashboards
+- URL: http://localhost:3001
 - Identifiants par défaut:
   - Login: admin
   - Mot de passe: admin
