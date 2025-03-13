@@ -40,7 +40,7 @@ L'architecture du service se compose de trois composants principaux :
 ### 1. Installer les dépendances
 
 ```bash
-python -m venv .venv
+python3.10 -m venv .venv
 source venv/bin/activate  
 pip install -r requirements.txt
 ```
@@ -152,7 +152,7 @@ Le service inclut un système de monitoring complet basé sur PostgreSQL et Graf
 
 ### Accès au dashboard Grafana
 
-- URL: http://localhost:3001
+- URL: http://localhost:3001/dashboards
 - Identifiants par défaut:
   - Login: admin
   - Mot de passe: admin
